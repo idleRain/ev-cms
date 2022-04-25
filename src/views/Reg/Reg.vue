@@ -9,17 +9,32 @@
       <!-- 表单校验需检查 :model :rules prop 这三个属性的配置-->
       <el-form :model="regForm" status-icon :rules="regRules" ref="ruleForm">
         <el-form-item prop="username">
-          <el-input type="text" placeholder="请输入用户名" v-model="regForm.username" autocomplete="off"></el-input>
+          <el-input type="text"
+                    placeholder="请输入用户名"
+                    prefix-icon="el-icon-user"
+                    v-model="regForm.username"
+                    autocomplete="off">
+          </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" placeholder="请输入密码" v-model="regForm.password" autocomplete="off"></el-input>
+          <el-input type="password"
+                    placeholder="请输入密码"
+                    prefix-icon="el-icon-lock"
+                    v-model="regForm.password"
+                    autocomplete="off">
+          </el-input>
         </el-form-item>
         <el-form-item prop="truePassword">
-          <el-input type="password" placeholder="请确认密码" v-model="regForm.truePassword" autocomplete="off"></el-input>
+          <el-input type="password"
+                    placeholder="请确认密码"
+                    prefix-icon="el-icon-lock"
+                    v-model="regForm.truePassword"
+                    autocomplete="off">
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" style="width: 100%" @click="register">注册</el-button>
-          <el-link type="info">去登录</el-link>
+          <el-link type="info" class="toLogin" @click="toLogin">去登录</el-link>
         </el-form-item>
       </el-form>
     </div>
@@ -84,6 +99,9 @@ export default {
         )
       })
     },
+    toLogin(){
+      this.$router.push('/login')
+    }
   }
 }
 </script>
@@ -109,6 +127,9 @@ export default {
     .title-box {
       height: 60px;
       background: url('../../assets/images/login_title.png') center no-repeat;
+    }
+    .toLogin{
+      font-size: 12px;
     }
   }
 }
