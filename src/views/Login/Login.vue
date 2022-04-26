@@ -66,6 +66,8 @@ export default {
             // localStorage.setItem('token',JSON.stringify(res.token))
             // 调用 users.js 下的 updateToken
             this.$store.commit('users/updateToken', res.token)
+            // 登陆成功跳转主页
+            this.$router.push('/')
           } else {
             this.$message.error(res.message)
           }

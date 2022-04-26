@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 
 import Reg from "@/views/Reg/Reg";
 import Login from "@/views/Login/Login";
+import Main from "@/views/Main/Main";
 
 // 应用 VueRouter
 Vue.use(VueRouter)
@@ -16,6 +17,10 @@ const routes = [
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/',
+        component: Main
     }
 ]
 

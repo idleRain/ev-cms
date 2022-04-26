@@ -1,24 +1,4 @@
-# ev-cms
-
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# About
+> 这是一个基于 Vue2 的练习项目
+>
+> 相关技术点 : Vue2 + VueRouter + Vuex + Element-UI + less
