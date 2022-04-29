@@ -19,6 +19,28 @@ import 'element-ui/lib/theme-chalk/index.css';
 import axios from "axios";
 // 配置 axios 请求根路径
 axios.defaults.baseURL = 'http://www.liulongbin.top:3008'
+// axios请求拦截器 配置全局请求头
+axios.interceptors.request.use((config) => {
+    // 请求头携带 token
+    config.headers.Authorization = store.state.users.token
+    return config
+}, (error) => {
+    return Promise.reject(error)
+})
+// axios 响应拦截器，判断登录状态是否失效
+axios.interceptors.response.use(function (response) {
+    return response
+}, function (error) {
+    // 如果状态码为 401 ，说明 token 失效，那么返回登录页
+    if (error.response.status === 401) {
+        // 清空 token
+        store.commit('users/updateToken')
+        Vue.prototype.$message.error('登陆状态失效，请重新登录！')
+        router.push('/login')
+    }
+    return Promise.reject(error)
+})
+
 // 将 axios 挂载到 Vue 的原型对象上
 Vue.prototype.$http = axios
 
@@ -30,7 +52,7 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
-  store,
-  router
+    render: h => h(App),
+    store,
+    router
 }).$mount('#app')

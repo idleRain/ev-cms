@@ -32,30 +32,41 @@
         <div class="user-box">
           <!-- webpack 打包注意事项 ：如果路径里面是表达式或变量 ，webpack 不会进行打包 -->
           <!-- <img :src="userinfo.user_pic || '@/assets/logo.png'" alt=""> -->
-          <img v-if="userinfo.user_pic" :src="userinfo.user_pic">
-          <img v-else src="@/assets/logo.png">
+          <img v-if="userinfo.user_pic" :src="userinfo.user_pic" alt="">
+          <img v-else src="@/assets/logo.png" alt="">
           <span>欢迎 {{ userinfo.nickname || userinfo.username }}</span>
         </div>
         <!-- 左侧菜单栏 -->
         <el-menu
-            default-active="1"
+            default-active="/home"
             class="el-menu-vertical-demo"
             background-color="#23262e"
             text-color="#fff"
             active-text-color="#409eff">
-          <el-menu-item index="1">
-            <i class="el-icon-menu"></i>
-            <span slot="title">首页</span>
-          </el-menu-item>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>文章管理</span>
-            </template>
-            <el-menu-item index="2-1">文章分类</el-menu-item>
-            <el-menu-item index="2-2">文章列表</el-menu-item>
-          </el-submenu>
-          <el-submenu index="3">
+          <template v-for="item in menu">
+            <!-- 如果有没有子菜单渲染 首页 组件 -->
+            <el-menu-item v-if="!item.children" :key="item.indexPath" :index="item.indexPath">
+              <i class="el-icon-menu"></i>
+              <span slot="title">首页</span>
+            </el-menu-item>
+            <!-- 如果有子菜单则渲染 列表 组件 -->
+            <el-submenu v-else :key="item.indexPath" :index="item.indexPath">
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span>{{item.title}}</span>
+              </template>
+              <el-menu-item
+                  :index="child.indexPath"
+                  v-for="child in item.children"
+                  :key="child.indexPath"
+              >
+                <i :class="child.icon"></i>
+                {{ child.title }}
+              </el-menu-item>
+            </el-submenu>
+          </template>
+
+          <!-- <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>个人中心</span>
@@ -63,7 +74,7 @@
             <el-menu-item index="3-1">基本资料</el-menu-item>
             <el-menu-item index="3-2">更换头像</el-menu-item>
             <el-menu-item index="3-3">重置密码</el-menu-item>
-          </el-submenu>
+          </el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>
@@ -83,13 +94,14 @@ import {mapState} from 'vuex'
 
 export default {
   name: 'Main',
-  data(){
+  data() {
     return {
       // 准备数组装菜单栏数据
       menu: []
     }
   },
   methods: {
+    // 退出功能
     logout() {
       this.$confirm('嘤嘤嘤，确定要退出登陆吗？ ꒰*´◒`*꒱ ', '退出登录', {
         confirmButtonText: '确定',
@@ -115,16 +127,11 @@ export default {
   // 页面加载时获取用户信息 , 需携带请求头并且存放到 Vuex 中 , 所以在 vuex 中发送请求
   created() {
     // 发送请求 ，获取菜单列表
-    this.$http.get('/my/menus', {
-      // 需要携带请求头
-      headers: {
-        Authorization: this.token
-      }
-    }).then(({data: res}) => {
+    this.$http.get('/my/menus').then(({data: res}) => {
       if (res.code !== 0) return
       this.menu = res.data
     })
-
+    // 获取 Vuex 里面的用户信息
     this.$store.dispatch('users/getUserinfo')
   },
   computed: {
