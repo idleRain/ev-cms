@@ -4,19 +4,19 @@ import App from './App.vue'
 import store from '@/store'
 
 // 引入 VueRouter 插件
-import VueRouter from "vue-router";
+import VueRouter from "vue-router"
 // 引入 Router
-import router from "@/router";
+import router from "@/router"
 
 // 引入全局样式
 import "@/assets/global.less"
 
 // 完整引入 element-ui
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 // 引入 axios
-import axios from "axios";
+import axios from "axios"
 // 配置 axios 请求根路径
 axios.defaults.baseURL = 'http://www.liulongbin.top:3008'
 // axios请求拦截器 配置全局请求头

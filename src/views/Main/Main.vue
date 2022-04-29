@@ -53,7 +53,7 @@
             <el-submenu v-else :key="item.indexPath" :index="item.indexPath">
               <template slot="title">
                 <i :class="item.icon"></i>
-                <span>{{item.title}}</span>
+                <span>{{ item.title }}</span>
               </template>
               <el-menu-item
                   :index="child.indexPath"
@@ -65,22 +65,12 @@
               </el-menu-item>
             </el-submenu>
           </template>
-
-          <!-- <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>个人中心</span>
-            </template>
-            <el-menu-item index="3-1">基本资料</el-menu-item>
-            <el-menu-item index="3-2">更换头像</el-menu-item>
-            <el-menu-item index="3-3">重置密码</el-menu-item>
-          </el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>
         <!-- 页面主体区域 -->
         <el-main>
-          Main.vue后台主页
+          <router-view></router-view>
         </el-main>
         <!-- 底部 footer 区域 -->
         <el-footer>© www.itheima.com - 黑马程序员</el-footer>

@@ -6,6 +6,8 @@ import Reg from "@/views/Reg/Reg";
 import Login from "@/views/Login/Login";
 import Main from "@/views/Main/Main";
 import store from "@/store";
+import Home from "@/views/Menus/Home/Home";
+import UserInfo from "@/views/Menus/UserInfo/UserInfo";
 
 // 应用 VueRouter
 Vue.use(VueRouter)
@@ -21,7 +23,13 @@ const routes = [
     },
     {
         path: '/',
-        component: Main
+        component: Main,
+        // 访问首页时重定向到 home
+        redirect: '/home',
+        children: [
+            {path: 'home', component: Home},
+            {path: 'userinfo',component: UserInfo}
+        ]
     }
 ]
 
