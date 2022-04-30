@@ -4,7 +4,10 @@
       <span>基本资料</span>
     </div>
     <!-- 表单 -->
-    <el-form :model="userForm" :rules="userFormRules" ref="userFormRef" label-width="100px">
+    <el-form :model="userForm"
+             :rules="userFormRules"
+             ref="userFormRef"
+             label-width="100px">
       <el-form-item label="登录名称" prop="username">
         <el-input v-model="userForm.username" disabled></el-input>
       </el-form-item>
@@ -15,8 +18,9 @@
         <el-input v-model="userForm.email"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">提交修改</el-button>
-        <el-button>重置</el-button>
+        <el-button type="primary" @click="update">提交修改</el-button>
+        <!-- this.$refs[formName].resetFields()  对整个表单进行重置，将所有字段值重置为初始值并移除校验结果-->
+        <el-button @click="$refs['userFormRef'].resetFields()">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -28,7 +32,12 @@ export default {
   data() {
     return {
       // 基于浅拷贝，把 Vuex 中的用户信息对象复制一份，交给 userForm
-      userForm: Object.assign({}, this.$store.state.userInfo),
+      // userForm: Object.assign({}, this.$store.state.userInfo),
+      userForm: {
+        username: '',
+        nickname: '',
+        email: ''
+      },
       // 表单的验证规则对象
       userFormRules: {
         nickname: [
@@ -40,6 +49,26 @@ export default {
           {type: 'email', message: '邮箱格式不正确', trigger: 'blur'}
         ]
       }
+    }
+  },
+  created() {
+    // 初始化 userForm
+    // this.userForm = this.$store.state.users.userinfo     // 不推荐，因为这样会直接修改 vuex.state 中的值
+    // 基于浅拷贝，把 Vuex 中的用户信息对象复制一份，交给 userForm
+    this.userForm = Object.assign({}, this.$store.state.users.userinfo)
+  },
+  methods: {
+    update() {
+      // 提交前兜底校验
+      this.$refs['userFormRef'].validate((valid) => {
+        if (!valid) return this.$message.warning('输入有误！请检查无误后提交')
+        // 无误后提交数据
+        this.$http.put('/my/userinfo', this.userForm).then(response => {
+          this.$message.success(response.data.message)
+          // 更新 vuex 中的 userinfo
+          this.$store.dispatch('users/getUserinfo')
+        })
+      })
     }
   }
 }

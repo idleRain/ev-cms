@@ -37,15 +37,21 @@
           <span>欢迎 {{ userinfo.nickname || userinfo.username }}</span>
         </div>
         <!-- 左侧菜单栏 -->
+        <!-- router : 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 path 进行路由跳转 -->
         <el-menu
-            default-active="/home"
+            :default-active="$route.path"
             class="el-menu-vertical-demo"
             background-color="#23262e"
             text-color="#fff"
-            active-text-color="#409eff">
+            active-text-color="#409eff"
+            router
+        >
           <template v-for="item in menu">
             <!-- 如果有没有子菜单渲染 首页 组件 -->
-            <el-menu-item v-if="!item.children" :key="item.indexPath" :index="item.indexPath">
+            <el-menu-item v-if="!item.children"
+                          :key="item.indexPath"
+                          :index="item.indexPath"
+            >
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>

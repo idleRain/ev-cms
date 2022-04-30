@@ -365,7 +365,7 @@ export default {
   line-height: 50px;
   display: inline-block;
   margin: 10px 0 0 20px;
-  font-family: 'Arial';
+  font-family: 'Arial',serif;
   color: #83a2ed;
 }
 

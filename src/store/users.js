@@ -22,12 +22,7 @@ export default {
     actions: {
         // content : 上下文对象 ( 小store )
         getUserinfo(content) {
-            axios.get('/my/userinfo', {
-                // 携带请求头
-                headers: {
-                    Authorization: content.state.token
-                }
-            }).then(({data: res}) => {
+            axios.get('/my/userinfo').then(({data: res}) => {
                 // 如果没有获取到则终止运行
                 if (res.code !== 0) return
                 // 数据提交给 mutations 下的 updateUserinfo
