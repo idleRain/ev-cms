@@ -7,7 +7,9 @@ import Login from "@/views/Login/Login";
 import Main from "@/views/Main/Main";
 import store from "@/store";
 import Home from "@/views/Menus/Home/Home";
-import UserInfo from "@/views/Menus/UserInfo/UserInfo";
+import UserInfo from "@/views/Menus/User/UserInfo";
+import UserAvatar from "@/views/Menus/User/UserAvatar";
+import UserPwd from "@/views/Menus/User/UserPwd";
 
 // 应用 VueRouter
 Vue.use(VueRouter)
@@ -28,7 +30,9 @@ const routes = [
         redirect: '/home',
         children: [
             {path: 'home', component: Home},
-            {path: 'user-info',component: UserInfo}
+            {path: 'user-info',component: UserInfo},
+            {path: 'user-avatar',component: UserAvatar},
+            {path: 'user-pwd',component: UserPwd}
         ]
     }
 ]
