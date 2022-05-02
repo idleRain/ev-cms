@@ -10,6 +10,7 @@ import Home from "@/views/Menus/Home/Home";
 import UserInfo from "@/views/Menus/User/UserInfo";
 import UserAvatar from "@/views/Menus/User/UserAvatar";
 import UserPwd from "@/views/Menus/User/UserPwd";
+import ArtCate from "@/views/Menus/Article/ArtCate";
 
 // 应用 VueRouter
 Vue.use(VueRouter)
@@ -32,7 +33,8 @@ const routes = [
             {path: 'home', component: Home},
             {path: 'user-info',component: UserInfo},
             {path: 'user-avatar',component: UserAvatar},
-            {path: 'user-pwd',component: UserPwd}
+            {path: 'user-pwd',component: UserPwd},
+            {path: 'art-cate',component: ArtCate},
         ]
     }
 ]
