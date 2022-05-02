@@ -11,6 +11,7 @@ import UserInfo from "@/views/Menus/User/UserInfo";
 import UserAvatar from "@/views/Menus/User/UserAvatar";
 import UserPwd from "@/views/Menus/User/UserPwd";
 import ArtCate from "@/views/Menus/Article/ArtCate";
+import ArtList from "@/views/Menus/User/ArtList";
 
 // 应用 VueRouter
 Vue.use(VueRouter)
@@ -35,6 +36,7 @@ const routes = [
             {path: 'user-avatar',component: UserAvatar},
             {path: 'user-pwd',component: UserPwd},
             {path: 'art-cate',component: ArtCate},
+            {path: 'art-list',component: ArtList},
         ]
     }
 ]
