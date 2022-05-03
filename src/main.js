@@ -44,6 +44,16 @@ axios.interceptors.response.use(function (response) {
 // 将 axios 挂载到 Vue 的原型对象上
 Vue.prototype.$http = axios
 
+import VueQuillEditor from 'vue-quill-editor'
+
+// require styles
+// 引入富文本编辑器
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor, /* { default global options } */)
+
 // 应用 element-ui
 Vue.use(ElementUI)
 // 应用 router
