@@ -60,7 +60,30 @@
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
           <!-- 富文本编辑器 -->
-          <quill-editor @blur="$refs.ruleForm.validateField('content')" v-model="pubForm.content"></quill-editor>
+          <quill-editor
+              v-if="pubVisible"
+              v-model="pubForm.content"
+              @change="$refs.ruleForm.validateField('content')">
+          </quill-editor>
+        </el-form-item>
+        <el-form-item label="文章封面" prop="cover_img">
+          <img :src="cover" class="cover_img" alt="">
+          <p>
+            <el-button type="text" @click="selectFile">+ 选择图片</el-button>
+          </p>
+          <input
+              v-if="pubVisible"
+              type="file"
+              @change="coverChange($event)"
+              single
+              accept="image/*"
+              style="display: none"
+              ref="file">
+        </el-form-item>
+        <!--        提交-->
+        <el-form-item prop="state">
+          <el-button @click="pubArt('已发布')" type="primary">发布</el-button>
+          <el-button @click="pubArt('草稿')" type="info">存为草稿</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -68,10 +91,14 @@
 </template>
 
 <script>
+import cover from '@/assets/images/cover.jpg'
+
 export default {
   name: 'ArtList',
   data() {
     return {
+      // 预览图片
+      cover,
       // 查询参数对象
       q: {
         pagenum: 1,
@@ -83,7 +110,9 @@ export default {
       pubForm: {
         title: '',
         cate_id: '',
-        content: ''
+        content: '',
+        cover_img: '',
+        state: ''
       },
       // 分类列表
       Lists: [],
@@ -94,11 +123,14 @@ export default {
           {min: 1, max: 30, message: '请输入 1 ~ 30 个字符', trigger: 'blur'}
         ],
         cate_id: [
-          {required: true, message: '请选择分类', trigger: 'blur'}
+          {required: true, message: '请选择分类', trigger: 'change'}
         ],
-        content:[
-          {required: true, message: '请输入文章内容', trigger: 'blur'}
-        ]
+        content: [
+          {required: true, message: '请输入文章内容', trigger: 'change'}
+        ],
+        cover_img: [
+          {required: true, message: '文章封面不饿为空', trigger: 'change'}
+        ],
       },
       pubVisible: false
     }
@@ -109,6 +141,9 @@ export default {
       this.$confirm('此操作将导致文章信息丢失, 是否继续？', '提醒', {type: 'warning'})
           .then(() => {
             done()
+            // 重置表单
+            this.$refs.ruleForm.resetFields()
+            this.cover = cover
           }).catch(() => {
       })
     },
@@ -116,6 +151,56 @@ export default {
     getCateList() {
       this.$http.get('/my/cate/list').then(response => {
         this.Lists = response.data.data
+      })
+    },
+    selectFile() {
+      this.$refs.file.click()
+    },
+    // 更新封面
+    coverChange(e) {
+      const file = e.target.files[0]
+      // 判断是否选择了图片
+      if (file) {
+        this.pubForm.cover_img = file
+        /**  img 标签的 src 只能设置 url 或者 base64  **/
+
+        // 方案一 ： 使用 FileReader 转成 base64
+        /*const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.addEventListener('load', e => {
+          this.cover = e.target.result
+        })*/
+
+        // 方案二 ： 使用 URL.createObjectURL() 转成 url
+        this.cover = URL.createObjectURL(file)
+      } else {
+        this.pubForm.cover_img = ''
+        this.cover = cover
+      }
+      // 图片发生改变后重新校验
+      this.$refs.ruleForm.validateField('cover_img')
+    },
+    // 发布或存为草稿
+    pubArt(state) {
+      this.pubForm.state = state
+      this.$refs.ruleForm.validate(async valid => {
+        if (!valid) return
+        // 将数据转成 formData 传给后端
+        const fd = new FormData()
+        // for in 遍历对象 , 将对象的所有属性加给 formData
+        /*for (const k in this.pubForm) {
+          fd.append(k, this.pubForm[k])
+        }*/
+        Object.keys(this.pubForm).forEach(k => fd.append(k, this.pubForm[k]))
+        // 发送请求
+        const {data:res} = await this.$http.post('/my/article/add',fd)
+        console.log(res)
+        if (res.code !== 0) return this.$message.error(res.message)
+        this.$message.success(res.message)
+        // 关闭并重置表单
+        this.pubVisible = false
+        this.$refs.ruleForm.resetFields()
+        this.cover = cover
       })
     }
   },
@@ -139,7 +224,15 @@ export default {
 .el-select {
   width: 100%;
 }
-.ql-container {
+
+// /deep/ 深度选择器
+/deep/ .ql-container {
   height: 300px;
+}
+
+.cover_img {
+  width: 400px;
+  height: 280px;
+  object-fit: cover;
 }
 </style>
