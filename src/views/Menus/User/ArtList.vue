@@ -26,8 +26,8 @@
         </el-form>
         <!-- 发表文章的按钮 -->
         <el-button
-            @click="pubVisible =
-            true" type="primary"
+            @click="pubVisible = true"
+            type="primary"
             size="small"
             class="btn-pub">
           发表文章
@@ -35,9 +35,32 @@
       </div>
 
       <!-- 文章表格区域 -->
+      <el-table :data="artList" style="width: 100%;" stripe>
+        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="分类" prop="cate_name"></el-table-column>
+        <el-table-column label="发表时间" prop="pub_date">
+          <template v-slot="{row:{pub_date}}">
+            {{ formatDate(pub_date) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" prop="state"></el-table-column>
+        <el-table-column label="操作">
+          <el-button size="mini" type="danger">删除</el-button>
+        </el-table-column>
+      </el-table>
 
       <!-- 分页区域 -->
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :page-sizes="[2,5,10]"
+          :page-size="q.pagesize"
+          :current-page="q.pagenum"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
     </el-card>
+
     <!--    文章发布 dialog    -->
     <el-dialog
         title="提示"
@@ -91,6 +114,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import cover from '@/assets/images/cover.jpg'
 
 export default {
@@ -106,6 +130,8 @@ export default {
         cate_id: '',
         state: ''
       },
+      // 文章总数
+      total: 0,
       // 表单双向绑定的数据
       pubForm: {
         title: '',
@@ -116,6 +142,8 @@ export default {
       },
       // 分类列表
       Lists: [],
+      // 页面文章信息列表
+      artList: [],
       // 表单校验
       pubRules: {
         title: [
@@ -132,6 +160,7 @@ export default {
           {required: true, message: '文章封面不饿为空', trigger: 'change'}
         ],
       },
+      // 决定 dialog 是否打开
       pubVisible: false
     }
   },
@@ -193,19 +222,38 @@ export default {
         }*/
         Object.keys(this.pubForm).forEach(k => fd.append(k, this.pubForm[k]))
         // 发送请求
-        const {data:res} = await this.$http.post('/my/article/add',fd)
-        console.log(res)
+        const {data: res} = await this.$http.post('/my/article/add', fd)
+        // console.log(res)
         if (res.code !== 0) return this.$message.error(res.message)
         this.$message.success(res.message)
         // 关闭并重置表单
         this.pubVisible = false
         this.$refs.ruleForm.resetFields()
         this.cover = cover
+        // 重新获取列表
+        await this.getArtList()
       })
+    },
+    // 获取分页列表信息
+    async getArtList() {
+      const {data: res} = await this.$http.get('/my/article/list', {params: this.q})
+      this.artList = res.data
+      this.total = res.total
+    },
+    // 格式化列表显示时间
+    formatDate(date) {
+      return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
     }
   },
   created() {
     this.getCateList()
+    this.getArtList()
   }
 }
 </script>
@@ -234,5 +282,9 @@ export default {
   width: 400px;
   height: 280px;
   object-fit: cover;
+}
+
+.el-pagination {
+  margin-top: 15px;
 }
 </style>
