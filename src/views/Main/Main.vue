@@ -10,8 +10,7 @@
           mode="horizontal"
           background-color="#23262E"
           text-color="#fff"
-          active-text-color="#409EFF"
-      >
+          active-text-color="#409EFF">
         <el-submenu index="1">
           <template slot="title">
             <!-- 头像 -->
@@ -48,10 +47,10 @@
         >
           <template v-for="item in menu">
             <!-- 如果有没有子菜单渲染 首页 组件 -->
-            <el-menu-item v-if="!item.children"
-                          :key="item.indexPath"
-                          :index="item.indexPath"
-            >
+            <el-menu-item
+                v-if="!item.children"
+                :key="item.indexPath"
+                :index="item.indexPath">
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>

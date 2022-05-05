@@ -40,7 +40,16 @@
 
       <!-- 文章表格区域 -->
       <el-table :data="artList" style="width: 100%;" stripe>
-        <el-table-column label="文章标题" prop="title"></el-table-column>
+        <el-table-column label="文章标题" prop="title">
+          <template v-slot="{row}">
+            <!-- 已发布渲染为绿色 草稿渲染为黄色 -->
+            <el-link
+                :type="row.state === '已发布' ? 'success' : 'warning'"
+                @click="showDetail(row.id)">
+              {{ row.title }}
+            </el-link>
+          </template>
+        </el-table-column>
         <el-table-column label="分类" prop="cate_name"></el-table-column>
         <el-table-column label="发表时间" prop="pub_date">
           <template v-slot="{row:{pub_date}}">
@@ -49,7 +58,14 @@
         </el-table-column>
         <el-table-column label="状态" prop="state"></el-table-column>
         <el-table-column label="操作">
-          <el-button size="mini" type="danger">删除</el-button>
+          <template v-slot="{row}">
+            <el-popconfirm
+                title="确定删除吗？"
+                @confirm="del(row.id)">
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popconfirm>
+            <!--  <el-button size="mini" @click="del(row.id)" type="danger">删除</el-button>  -->
+          </template>
         </el-table-column>
       </el-table>
 
@@ -65,7 +81,7 @@
       </el-pagination>
     </el-card>
 
-    <!--    文章发布 dialog    -->
+    <!--    文章发布的 dialog    -->
     <el-dialog
         title="提示"
         :visible.sync="pubVisible"
@@ -114,6 +130,19 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!--    查看文章详情的 dialog   -->
+    <el-dialog title="文章预览" :visible.sync="detailVisible" width="80%">
+      <h1 class="title">{{ artDetail.title }}</h1>
+      <div class="info">
+        <span>作者：{{ artDetail.nickname || artDetail.username }}</span>
+        <span>发布时间：{{ formatDate(artDetail.pub_date) }}</span>
+        <span>所属分类：{{ artDetail.cate_name }}</span>
+        <span>状态：{{ artDetail.state }}</span>
+      </div>
+      <el-divider></el-divider>
+      <img :src="'http://www.liulongbin.top:3008' + artDetail.cover_img" alt="">
+      <div class="detail-box" v-html="artDetail.content"></div>
+    </el-dialog>
   </div>
 </template>
 
@@ -153,6 +182,8 @@ export default {
       Lists: [],
       // 页面文章信息列表
       artList: [],
+      // 文章详情的数据
+      artDetail: {},
       // 表单校验
       pubRules: {
         title: [
@@ -169,8 +200,10 @@ export default {
           {required: true, message: '文章封面不饿为空', trigger: 'change'}
         ],
       },
-      // 决定 dialog 是否打开
-      pubVisible: false
+      // 决定发布文章的 dialog 是否打开
+      pubVisible: false,
+      // 决定查看文章详情的 dialog 是否打开
+      detailVisible: false
     }
   },
   methods: {
@@ -283,13 +316,35 @@ export default {
       this.getArtList()
     },
     // 重置列表
-    resetHandler(){
+    resetHandler() {
       // 重置筛选状态
       this.$refs.screenForm.resetFields()
       // 重置查询参数
       this.q = {pagenum: 1, pagesize: 2, cate_id: '', state: ''}
       // 重新获取分页列表信息
       this.getArtList()
+    },
+    // 获取文章详情
+    async showDetail(id) {
+      // 发请求，获取文章信息
+      const {data: res} = await this.$http.get('/my/article/info', {params: {id}})
+      console.log(res)
+      if (res.code !== 0) return this.$message.error(res.message)
+      this.artDetail = res.data
+      // 弹出 dialog
+      this.detailVisible = true
+    },
+    // 删除文章
+    async del(id) {
+      const {data: res} = await this.$http.delete('/my/article/info', {
+        params: {id}
+      })
+      if (res.code !== 0) return this.$message.error(res.message)
+      this.$message.success(res.message)
+      // 修复 bug , 因为 ajax 请求是异步的 ， 所以会先执行这条的语句 ， this.artList.length 不能判断为 0
+      if (this.artList.length === 1 && this.q.pagenum > 1) this.q.pagenum--
+      // 重新获取列表数据
+      await this.getArtList()
     }
   },
   created() {
@@ -327,5 +382,27 @@ export default {
 
 .el-pagination {
   margin-top: 15px;
+}
+
+.title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: normal;
+  color: #000;
+  margin: 0 0 10px 0;
+}
+
+.info {
+  font-size: 12px;
+
+  span {
+    margin-right: 20px;
+  }
+}
+
+/depp/ .detail-box {
+  img {
+    width: 500px;
+  }
 }
 </style>
