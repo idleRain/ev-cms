@@ -64,8 +64,7 @@
               <el-menu-item
                   :index="child.indexPath"
                   v-for="child in item.children"
-                  :key="child.indexPath"
-              >
+                  :key="child.indexPath">
                 <i :class="child.icon"></i>
                 {{ child.title }}
               </el-menu-item>
@@ -79,7 +78,7 @@
           <router-view></router-view>
         </el-main>
         <!-- 底部 footer 区域 -->
-        <el-footer>© www.itheima.com - 黑马程序员</el-footer>
+        <el-footer>© www.itheima.com - 牛马程序员 · 小丁</el-footer>
       </el-container>
     </el-container>
   </el-container>
