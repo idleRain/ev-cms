@@ -1,7 +1,7 @@
 import Vue from "vue";
 // 引入 VueRouter
 import VueRouter from "vue-router";
-
+// 引入组件
 import Reg from "@/views/Reg/Reg";
 import Login from "@/views/Login/Login";
 import Main from "@/views/Main/Main";
@@ -43,6 +43,7 @@ const routes = [
 
 // 创建路由器
 const router = new VueRouter({
+    // mode:'history', // history 模式 ，不显示路由 # 号
     routes
 })
 // 路由前置守卫，判断用户是否未登录操作页面跳转，如果是 则自动跳转到登录页
